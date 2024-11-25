@@ -1,0 +1,56 @@
+CREATE TABLE [Users] (
+  [UserID] UNIQUEIDENTIFIER DEFAULT NEWID(), 
+  [Username] NVARCHAR(50) NOT NULL,
+  [Email] NVARCHAR(50) NOT NULL UNIQUE,
+  [DateOfBirth] DATETIME,
+  [JoinDate] DATETIME DEFAULT GETDATE(),
+  PRIMARY KEY ([UserID])
+);
+
+CREATE TABLE [Channels] (
+  [ChannelID] INT, 
+  [ChannelName] NVARCHAR(50),
+  [UserID] UNIQUEIDENTIFIER,
+  PRIMARY KEY ([ChannelID]),
+  FOREIGN KEY ([UserID]) REFERENCES [Users]([UserID])
+);
+
+CREATE TABLE [VideoTags] (
+  [TagID] INT,
+  [TagName] NVARCHAR(50),
+  [VideoID] UNIQUEIDENTIFIER,
+  PRIMARY KEY ([TagID])
+);
+
+CREATE TABLE [Videos] (
+  [VideoID] UNIQUEIDENTIFIER DEFAULT NEWID(),  
+  [Title] NVARCHAR(50),
+  [Description] NVARCHAR(100),
+  [UploadDate] DATETIME DEFAULT GETDATE(),
+  [UserID] UNIQUEIDENTIFIER, 
+  [ChannelID] INT,  
+  [TagID] INT, 
+  PRIMARY KEY ([VideoID]),
+  FOREIGN KEY ([UserID]) REFERENCES [Users]([UserID]),
+  FOREIGN KEY ([ChannelID]) REFERENCES [Channels]([ChannelID]),
+  FOREIGN KEY ([TagID]) REFERENCES [VideoTags]([TagID])
+);
+
+CREATE TABLE [Playlists] (
+  [PlaylistID] UNIQUEIDENTIFIER DEFAULT NEWID(), 
+  [PlaylistName] NVARCHAR(50),
+  [UserID] UNIQUEIDENTIFIER, 
+  PRIMARY KEY ([PlaylistID]),
+  FOREIGN KEY ([UserID]) REFERENCES [Users]([UserID])
+);
+
+CREATE TABLE Comments (
+  [CommentID] UNIQUEIDENTIFIER DEFAULT NEWID(),
+  [Content] NVARCHAR(50),
+  [UserID] UNIQUEIDENTIFIER, 
+  [VideoID] UNIQUEIDENTIFIER,  
+  [PostedDate] DATETIME DEFAULT GETDATE(),
+  PRIMARY KEY ([CommentID]),
+  FOREIGN KEY ([UserID]) REFERENCES [Users]([UserID]),
+  FOREIGN KEY ([VideoID]) REFERENCES [Videos]([VideoID])
+);
